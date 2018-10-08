@@ -7,6 +7,7 @@
 ######################
 
 setwd("/Users/matttrombley/Desktop/Time Series II/Homework 4/")
+library(plyr)
 
 # Read in the data file
 well <- read.csv("G-1260_T.csv")
@@ -24,8 +25,21 @@ well_agg <- well_agg[order(well_agg$Group.1),]
 rownames(well_agg) <- 1:nrow(well_agg)
 colnames(well_agg) <- c("Date_Time", "Avg_Corrected_Well_Height")
 
-# Check to see if there are missing values (497 missing)
+# Check to see if there are missing values
 x1 <- as.POSIXct('2007-10-01 05:00:00',tz='UTC')
 x2 <- as.POSIXct('2018-06-13 03:00:00',tz='UTC')
-test_seq <- as.data.frame(seq(from=x1,to=x2,by="hour"))
-nrow(test_seq) - nrow(well_agg)
+full_date_time <- as.data.frame(seq(from=x1,to=x2,by="hour"))
+nrow(full_date_time) - nrow(well_agg) # 497 entries missing
+colnames(full_date_time) <- c("Date_Time")
+
+# Create full data set including missing times
+well_imputed <- join(full_date_time,well_agg, by = "Date_Time", type = "left")
+sum(is.na(well_imputed$Avg_Corrected_Well_Height)) # 497 NA values - can impute
+which(is.na(well_imputed$Avg_Corrected_Well_Height)) # Index of missing values
+
+# Impute missing values with desired measure
+for (i in 1:nrow(well_imputed)) {
+   if (is.na(well_imputed$Avg_Corrected_Well_Height[i])) {
+      well_imputed$Avg_Corrected_Well_Height[i] = mean(well_agg$Avg_Corrected_Well_Height)
+   }
+}
