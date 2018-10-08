@@ -6,11 +6,21 @@
 #
 ######################
 
-setwd("/Users/matttrombley/Desktop/Time Series II/Homework 4/")
+# Packages
 library(plyr)
+library(tidyverse)
+library(rJava)
+library(xlsx)
+
+# Working directories and file paths
+#setwd("/Users/matttrombley/Desktop/Time Series II/Homework 4/")
+setwd("C:\\Users\\Grant\\Downloads")
+path <- "C:\\Users\\Grant\\Documents\\GitHub\\Time-Series-2-\\G-1260_T.csv"
+
 
 # Read in the data file
-well <- read.csv("G-1260_T.csv")
+#well <- read.csv("G-1260_T.csv")
+well <- read_csv(path)
 
 # Create a time element that is hourly to aggregate on
 well$UTC.Hour <- as.character(well$UTC.Hour)
