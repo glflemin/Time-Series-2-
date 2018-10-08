@@ -1,5 +1,6 @@
 
-libname time "C:\Users\kiera\OneDrive\Documents\MSA 2019\Time Series";
+*libname time "C:\Users\kiera\OneDrive\Documents\MSA 2019\Time Series";
+libname timer "C:\\Users\\Grant\\Downloads";
 
 data time.well;
 	set well;
