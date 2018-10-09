@@ -15,18 +15,18 @@ library(zoo)
 library(forecast)
 
 # Working directories and file paths
-#setwd("/Users/matttrombley/Desktop/Time Series II/Homework 4/")
+setwd("/Users/matttrombley/Desktop/Time Series II/Homework 4/")
 setwd("C:\\Users\\Grant\\Downloads")
 path <- "C:\\Users\\Grant\\Documents\\GitHub\\Time-Series-2-\\G-1260_T.csv"
 
 
 # Read in the data file
-#well <- read.csv("G-1260_T.csv")
+well <- read.csv("G-1260_T.csv")
 well <- read_csv(path)
 
 # Create a time element that is hourly to aggregate on
-well$UTC.Hour <- as.character(well$UTC.Hour)
-well$date_hour <- paste(paste(well$UTC.Date,substr(well$UTC.Hour,1,nchar(well$UTC.Hour)-3),sep=" "),":00",sep="")
+well$UTC_Hour <- as.character(well$UTC_Hour)
+well$date_hour <- paste(paste(well$UTC_Date,substr(well$UTC_Hour,1,nchar(well$UTC_Hour)-3),sep=" "),":00",sep="")
 
 # Aggregate the corrected well height data to hourly
 well_agg <- aggregate(well$Corrected, list(well$date_hour), mean)
