@@ -14,14 +14,13 @@ library(xlsx)
 library(zoo)
 library(forecast)
 
-# Working directories and file paths
-setwd("/Users/matttrombley/Desktop/Time Series II/Homework 4/")
+# Working directories and file paths - Matt
+setwd("/Users/matttrombley/Documents/GitHub/Time-Series-2-/")
+well <- read.csv("G-1260_T.csv")
+
+# Working directories and file paths - Grant
 setwd("C:\\Users\\Grant\\Downloads")
 path <- "C:\\Users\\Grant\\Documents\\GitHub\\Time-Series-2-\\G-1260_T.csv"
-
-
-# Read in the data file
-well <- read.csv("G-1260_T.csv")
 well <- read_csv(path)
 
 # Create a time element that is hourly to aggregate on
