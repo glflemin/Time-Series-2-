@@ -11,8 +11,6 @@ library(plyr)
 library(tidyverse)
 library(rJava)
 library(xlsx)
-library(zoo)
-library(forecast)
 
 # Working directories and file paths
 #setwd("/Users/matttrombley/Desktop/Time Series II/Homework 4/")
@@ -57,14 +55,3 @@ for (i in 1:nrow(well_imputed)) {
       well_imputed$Avg_Corrected_Well_Height[i] = mean(well_agg$Avg_Corrected_Well_Height)
    }
 }
-
-# Check well plot for seasonality and/or trend (use zoo because ts doesn't work well with hourly indexing)
-well_ts <- zoo(well_imputed$Avg_Corrected_Well_Height, full_date_time$Date_Time)
-plot(well_ts,xlab = "Time (Years)", ylab = "Corrected Well Height (feet)", main="Time Series Plot of Well 1260 Height") # Plot of general time series
-decomp <- ts(well_imputed$Avg_Corrected_Well_Height, freq=8760)
-decomp_stl <- stl(decomp, s.window = 7)
-plot(decomp_stl) # Definitely have seasonality; trend may be negligible
-
-# Split sets for training and evaluating models (one week for evaluation)
-well_imp_train <- well_imputed[1:93623,]
-well_imp_test <- well_imputed[93624:93791,]
