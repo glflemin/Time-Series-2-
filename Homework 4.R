@@ -15,7 +15,7 @@ library(xlsx)
 # Working directories and file paths
 #setwd("/Users/matttrombley/Desktop/Time Series II/Homework 4/")
 setwd("C:\\Users\\Grant\\Downloads")
-path <- "C:\\Users\\Grant\\Documents\\GitHub\\Time-Series-2-\\well.csv"
+path <- "C:\\Users\\Grant\\Documents\\GitHub\\Time-Series-2-\\G-1260_T.csv"
 
 
 # Read in the data file
@@ -23,17 +23,15 @@ path <- "C:\\Users\\Grant\\Documents\\GitHub\\Time-Series-2-\\well.csv"
 well <- read_csv(path)
 
 # Create a time element that is hourly to aggregate on
-well$`UTC Hour` <- as.character(well$`UTC Hour`)
-well$date_hour <- paste(paste(well$`UTC Date`,substr(well$`UTC Hour`,1,nchar(well$`UTC Hour`)-3),sep=" "),":00",sep="")
+well$UTC.Hour <- as.character(well$UTC.Hour)
+well$date_hour <- paste(paste(well$UTC.Date,substr(well$UTC.Hour,1,nchar(well$UTC.Hour)-3),sep=" "),":00",sep="")
 
 # Aggregate the corrected well height data to hourly
 well_agg <- aggregate(well$Corrected, list(well$date_hour), mean)
-well_agg <- as.tibble(well_agg)
-well_agg <- rename(well_agg, dtime = Group.1, height = x)
 
 # Clean up formatting of dates, times, and row/column names
-well_agg$dtime <- as.POSIXct(strptime(well_agg$dtime, "%m/%d/%y %H:%M"), tz="UTC")
-well_agg <- well_agg[order(well_agg$dtime),]
+well_agg$Group.1 <- as.POSIXct(strptime(well_agg$Group.1, "%m/%d/%y %H:%M"), tz="UTC")
+well_agg <- well_agg[order(well_agg$Group.1),]
 rownames(well_agg) <- 1:nrow(well_agg)
 colnames(well_agg) <- c("Date_Time", "Avg_Corrected_Well_Height")
 
