@@ -9,7 +9,6 @@
 # Packages
 library(plyr)
 library(tidyverse)
-library(rJava)
 library(xlsx)
 library(zoo)
 library(forecast)
@@ -71,31 +70,3 @@ plot(decomp_stl) # Definitely have seasonality; trend may be negligible
 
 # Write out CSV for use in SAS
 write.csv(well_imputed, file = 'G_1260_T_imputed.csv', row.names = TRUE)
-
-# Split sets for training and evaluating models (one week for evaluation)
-well_imp_train <- well_imputed[1:93623,]
-well_imp_test <- well_imputed[93624:93791,]
-
-##########
-adf.test(well_ts, alternative = "stationary", k = 0)
-
-fit1a <- arima(y, order = c(1, 0, 2), xreg = X, include.mean = TRUE)
-Box.test(fit1a$resid,lag=24,fitdf=3,type="Ljung-Box")
-
-arima.well=Arima(well_ts,order=c(1,0,0))
-summary(arima.well)
-Acf(arima.well$residuals)$acf
-Pacf(arima.well$residuals)$acf
-x1.sin=sin(2*pi*well_ts*1/8766)
-x1.cos=cos(2*pi*well_ts*1/8766)
-x2.sin=sin(2*pi*well_ts*2/8766)
-x2.cos=cos(2*pi*well_ts*2/8766)
-x3.sin=sin(2*pi*well_ts*3/8766)
-x3.cos=cos(2*pi*well_ts*3/8766)
-x4.sin=sin(2*pi*well_ts*4/8766)
-x4.cos=cos(2*pi*well_ts*4/8766)
-x.reg=cbind(x1.sin,x1.cos,x2.sin,x2.cos,x3.sin,x3.cos,x4.sin,x4.cos)
-test_arima <- Arima(well_ts, order = c(2, 0, 0), seasonal = c(1, 0, 0), xreg=x.reg, method = "ML")
-summary(test_arima)
-forecast(test_arima, h = 168)
-plot(forecast(test_arima, h = 168))
