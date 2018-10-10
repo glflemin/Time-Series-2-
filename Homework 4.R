@@ -14,6 +14,13 @@ library(xlsx)
 library(zoo)
 library(forecast)
 library(imputeTS)
+library(haven)
+library(fma)
+library(expsmooth)
+library(lmtest)
+library(seasonal)
+library(tseries)
+
 
 # Working directories and file paths - Matt
 setwd("/Users/matttrombley/Documents/GitHub/Time-Series-2-/")
@@ -70,6 +77,10 @@ well_imp_train <- well_imputed[1:93623,]
 well_imp_test <- well_imputed[93624:93791,]
 
 ##########
+adf.test(well_ts, alternative = "stationary", k = 0)
+
+fit1a <- arima(y, order = c(1, 0, 2), xreg = X, include.mean = TRUE)
+Box.test(fit1a$resid,lag=24,fitdf=3,type="Ljung-Box")
 
 arima.well=Arima(well_ts,order=c(1,0,0))
 summary(arima.well)
