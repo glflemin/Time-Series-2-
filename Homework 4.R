@@ -19,7 +19,9 @@ library(expsmooth)
 library(lmtest)
 library(seasonal)
 library(tseries)
-
+library(ggplot2)
+library(data.table)
+library(reshape2)
 
 # Working directories and file paths - Matt
 setwd("/Users/matttrombley/Documents/GitHub/Time-Series-2-/")
@@ -70,3 +72,32 @@ plot(decomp_stl) # Definitely have seasonality; trend may be negligible
 
 # Write out CSV for use in SAS
 write.csv(well_imputed, file = 'G_1260_T_imputed.csv', row.names = TRUE)
+
+
+#########################
+# Time series analyzed and fit in SAS; forecasting evaluation done here
+#########################
+
+ts = read_sas("casts.sas7bdat")
+
+predicteds=as.data.frame(ts$FORECAST)
+test=as.data.frame(ts$Avg_Corrected_Well_Height)
+TSdata = as.data.frame(c(predicteds,test))
+setnames(TSdata, old = c("ts.FORECAST","ts.Avg_Corrected_Well_Height"), new = c("Forecasted","Actual"))
+TSdata <- tail(TSdata, 168)
+TSdata$Hours = seq(1:168)
+TSdata2 <- gather(TSdata,Pred_Actual,Value,Forecasted:Actual)
+
+#Actual plot
+t = ggplot(TSdata2, aes(Hours,Value,group = Pred_Actual, color = Pred_Actual )) +
+   #geom_point(size = 3) +
+   geom_line(size = 1.2)
+
+t +  labs(title = "Forecasted vs Actual Values" ,x = "Hours", y = "Well Depth (feet)",
+          title = " ", color = " ") + theme(text = element_text(size=25))
+
+error=TSdata$Forecasted - mean(TSdata$Actual)
+MAE=mean(abs(error))
+MAPE=mean(abs(error)/abs(ts$Avg_Corrected_Well_Height))
+MAE
+MAPE
