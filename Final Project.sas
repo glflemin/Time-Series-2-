@@ -21,8 +21,8 @@ run;
 quit;
 
 proc arima data=well_merged;
-identify var=avg_corrected_well_height(1,8766) crosscorr=(tide_height rain_amt) nlag=24;* p=(0:12) q=(0:12) minic esacf;
-estimate p=2 q=8 input=(/(1)tide_height rain_amt);
+identify var=avg_corrected_well_height(1,8766) crosscorr=(tide_height(6) rain_amt(2)) nlag=24;* p=(0:12) q=(0:12) minic esacf;
+estimate p=1 q=8 input=(/(1)tide_height rain_amt);
 forecast back=168 lead=168 out=test1;
 run;
 quit;
@@ -33,6 +33,15 @@ quit;
 5,1 looks good as well
 q=8,9,10 all good options
 don't go below 2 for p
+
+best I have so far
+
+proc arima data=well_merged;
+identify var=avg_corrected_well_height(1,8766) crosscorr=(tide_height(6) rain_amt(2)) nlag=24;* p=(0:12) q=(0:12) minic esacf;
+estimate p=1 q=8 input=(/(1)tide_height rain_amt);
+forecast back=168 lead=168 out=test1;
+run;
+quit;
 */
 data mape;
 	set test1(firstobs=93504);
