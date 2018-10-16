@@ -32,3 +32,10 @@ quit;
 q=8,9,10 all good options
 don't go below 2 for p
 */
+data mape;
+	set test1(firstobs=93504);
+	pct_error = 100*abs(residual)/abs(avg_corrected_well_height);
+run;
+proc means data=mape n mean;
+	var pct_error;
+run;
