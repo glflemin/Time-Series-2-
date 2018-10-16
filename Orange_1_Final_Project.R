@@ -18,17 +18,17 @@ tide <- read.csv("station_8722802.csv")
 
 # Remove values having code P and make time indices match well data
 well <- well[1:112063,]
-rain <- rain[69237:443908,]
-tide <- tide[173071:1109640,]
+rain <- rain[69221:443908,]
+tide <- tide[173031:1109630,]
 
 # Create a time element that is hourly to aggregate on
-well$UTC_Hour <- as.character(well$UTC_Hour)
+well$time <- as.character(well$time)
 rain$Time <- as.character(rain$Time)
 tide$hour_check <- substr(tide$Time,1,1)
 tide$hour1 <- substr(tide$Time,2,2)
 tide$hour2 <- substr(tide$Time,1,2)
 tide$new_hour <- ifelse(tide$hour_check == '0',tide$hour1,tide$hour2)
-well$date_hour <- paste(paste(well$UTC_Date,substr(well$UTC_Hour,1,nchar(well$UTC_Hour)-3),sep=" "),":00",sep="")
+well$date_hour <- paste(paste(well$date,substr(well$time,1,nchar(well$time)-3),sep=" "),":00",sep="")
 rain$date_hour <- paste(rain$Date,paste(substr(rain$Time,1,nchar(rain$Time)-3),":00",sep=""),sep=" ")
 tide$date_hour <- paste(tide$Date,paste(tide$new_hour,":00",sep=""),sep=" ")
 
@@ -52,21 +52,21 @@ colnames(rain_agg) <- c("Date_Time", "Rain_Amt")
 colnames(tide_agg) <- c("Date_Time", "Tide_Height")
 
 # Check to see if there are missing values
-x1 <- as.POSIXct('2007-10-01 05:00:00',tz='UTC')
-x2 <- as.POSIXct('2018-06-08 00:00:00',tz='UTC')
+x1 <- as.POSIXct('2007-10-01 01:00:00',tz='UTC')
+x2 <- as.POSIXct('2018-06-07 23:00:00',tz='UTC')
 full_date_time <- as.data.frame(seq(from=x1,to=x2,by="hour"))
 colnames(full_date_time) <- c("Date_Time")
-nrow(full_date_time) - nrow(well_agg) # 494 row difference
+nrow(full_date_time) - nrow(well_agg) # 509 row difference
 nrow(full_date_time) - nrow(rain_agg) # 0 row difference
-nrow(full_date_time) - nrow(tide_agg) # 11 row difference
+nrow(full_date_time) - nrow(tide_agg) # 12 row difference
 
 
 # Create full data set including missing times
 well_imputed <- join(full_date_time,well_agg, by = "Date_Time", type = "left")
 tide_imputed <- join(full_date_time,tide_agg, by = "Date_Time", type = "left")
-rain_imputed <- rain_agg
-sum(is.na(well_imputed$Avg_Corrected_Well_Height)) # 497 NA values - can impute
-sum(is.na(tide_imputed$Tide_Height))
+rain_imputed <- rain_agg[1:(nrow(rain_agg)-1),]
+sum(is.na(well_imputed$Avg_Corrected_Well_Height)) # 508 NA values - can impute
+sum(is.na(tide_imputed$Tide_Height)) #11 NA values - can impute
 # which(is.na(well_imputed$Avg_Corrected_Well_Height)) # Index of missing values
 
 # Impute missing values with desired measure
