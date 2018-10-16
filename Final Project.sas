@@ -21,12 +21,14 @@ run;
 quit;
 
 proc arima data=well_merged;
-identify var=avg_corrected_well_height(1,8766) crosscorr=(rain_amt tide_height) nlag=24;* p=(0:12) q=(0:12) minic esacf;
-estimate p=2 q=8 input=(rain_amt tide_height);
+identify var=avg_corrected_well_height(1,8766) crosscorr=(tide_height rain_amt) nlag=24;* p=(0:12) q=(0:12) minic esacf;
+estimate p=2 q=8 input=(/(1)tide_height rain_amt);
 forecast back=168 lead=168 out=test1;
 run;
 quit;
 /*
+1,9 with just tide height or 2,8
+2,8
 4,2 looks good as well
 5,1 looks good as well
 q=8,9,10 all good options
